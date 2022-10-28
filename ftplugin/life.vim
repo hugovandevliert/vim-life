@@ -11,3 +11,7 @@ setlocal noswapfile
 setlocal nowrap
 setlocal nonumber
 setlocal nospell
+
+nnoremap <buffer> <Plug>(life-open) <Cmd>call life#OpenFile()<CR>
+
+nmap <buffer><nowait> <CR> <Plug>(life-open)

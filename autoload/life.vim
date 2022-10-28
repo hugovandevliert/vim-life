@@ -17,3 +17,15 @@ export def Open(path = getcwd())
   setlocal nomodifiable
   setlocal filetype=life
 enddef
+
+export def OpenFile()
+  # TODO: expand('%:p') won't do it, it's not updated when in nested folders. We
+  # might have to store the current directory somewhere.
+  const path = expand('%:p') .. getline('.')
+
+  if isdirectory(path)
+    life#Open(path)
+  endif
+
+  execute 'edit' fnameescape(path)
+enddef
