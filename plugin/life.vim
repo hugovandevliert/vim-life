@@ -1,4 +1,4 @@
-vim9script
+vim9script noclear
 
 if exists('g:loaded_life')
   finish

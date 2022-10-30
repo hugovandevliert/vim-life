@@ -1,7 +1,4 @@
-" if exists('b:did_ftplugin')
-"   finish
-" endif
-" b:did_ftplugin = true
+vim9script
 
 setlocal bufhidden=delete
 setlocal buftype=nowrite
