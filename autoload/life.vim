@@ -29,3 +29,13 @@ export def OpenFile()
 
   execute 'edit' fnameescape(path)
 enddef
+
+export def Up()
+  const parent_dir = fnamemodify(b:life_current_dir, ':h:h')
+
+  if parent_dir == '/'
+    life#Open(parent_dir)
+  else
+    life#Open(parent_dir .. '/')
+  endif
+enddef
