@@ -1,9 +1,8 @@
 vim9script
 
 export def Open(path: string)
-  # TODO: support linked directories
-  final files = readdirex(path)->mapnew((_, file) =>
-    file.name .. (file.type == 'dir' ? '/' : '')
+  const files = readdirex(path)->mapnew((_, file) =>
+    file.name .. (file.type =~ 'dir\|linkd' ? '/' : '')
   )
 
   # TODO: sorting
