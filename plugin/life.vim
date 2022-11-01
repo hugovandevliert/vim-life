@@ -14,7 +14,7 @@ augroup END
 def OnBufEnter()
   const path = expand('%:p')
   if isdirectory(path)
-    life#Open(path)
+    life#OpenDir(path)
   endif
 enddef
 
