@@ -44,6 +44,16 @@ export def Up()
   search(pattern, 'c')
 enddef
 
+export def Reload()
+  const filename = getline('.')
+
+  life#OpenDir(b:life_current_dir)
+  redraw!
+
+  const pattern = printf('\V\^%s\$', filename)
+  search(pattern, 'c')
+enddef
+
 export def CreateFile()
   const filename = input('Please enter a file name: ')
   const path = b:life_current_dir .. filename
