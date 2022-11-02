@@ -78,3 +78,25 @@ export def CreateDir()
   const pattern = printf('\V\c\<%s\>', dirname)
   search(pattern, 'c')
 enddef
+
+export def Delete()
+  const path = b:life_current_dir .. getline('.')
+  echo 'Confirm deletion of' isdirectory(path) ? 'directory' : 'file' fnameescape(path) '[Y/n]'
+  const c = getchar()
+
+  if c != 13 && c != 121 # Y or <CR>
+    redraw!
+    return
+  endif
+
+  const output = system('rm -rf ' .. fnameescape(path))
+  if v:shell_error != 0
+    echoerr output
+    return
+  endif
+
+  redraw!
+  setlocal modifiable
+  delete
+  setlocal nomodifiable
+enddef
