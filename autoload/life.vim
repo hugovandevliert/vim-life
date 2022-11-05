@@ -1,19 +1,12 @@
 vim9script
 
 export def OpenDir(path: string)
-  const files = readdirex(path)->mapnew((_, file) =>
-    file.name .. (file.type =~ 'dir\|linkd' ? '/' : '')
-  )
-
-  # TODO: sorting
+  final entries = readdirex(path, '1', { sort: 'none' })
+  sort(entries, Compare)
+  const names = entries->mapnew((_, file) => file.name .. (IsDir(file) ? '/' : ''))
 
   enew
-
-  setlocal modifiable
-
-  setline(1, files)
-
-  setlocal nomodifiable
+  setline(1, names)
   setlocal filetype=life
 
   b:life_current_dir = path
@@ -99,4 +92,16 @@ export def Delete()
   setlocal modifiable
   delete
   setlocal nomodifiable
+enddef
+
+def Compare(f1: dict<any>, f2: dict<any>): number
+  if IsDir(f1) != IsDir(f2)
+    return IsDir(f1) ? -1 : +1
+  endif
+
+  return f1.name < f2.name ? -1 : +1
+enddef
+
+def IsDir(file: dict<any>): bool
+  return file.type =~ 'dir\|linkd'
 enddef
