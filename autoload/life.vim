@@ -33,8 +33,7 @@ export def Up()
     life#OpenDir(parent_dir .. '/')
   endif
 
-  const pattern = printf('\V\c\<%s\>', previous_folder)
-  search(pattern, 'c')
+  MoveCursor(previous_folder)
 enddef
 
 export def Reload()
@@ -43,8 +42,7 @@ export def Reload()
   life#OpenDir(b:life_current_dir)
   redraw!
 
-  const pattern = printf('\V\^%s\$', filename)
-  search(pattern, 'c')
+  MoveCursor(filename)
 enddef
 
 export def CreateFile()
@@ -68,8 +66,7 @@ export def CreateDir()
 
   life#OpenDir(b:life_current_dir)
 
-  const pattern = printf('\V\c\<%s\>', dirname)
-  search(pattern, 'c')
+  MoveCursor(dirname)
 enddef
 
 export def Delete()
@@ -104,4 +101,9 @@ enddef
 
 def IsDir(file: dict<any>): bool
   return file.type =~ 'dir\|linkd'
+enddef
+
+def MoveCursor(text: string)
+  const pattern = printf('\V\^%s\/\?\$', text)
+  search(pattern, 'c')
 enddef
