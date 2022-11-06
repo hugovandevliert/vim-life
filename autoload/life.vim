@@ -111,6 +111,18 @@ export def Move()
   MoveCursor(fnamemodify(newpath, ':t'))
 enddef
 
+export def Help()
+  echo 'Available commands:'
+  echo '<cr> open selected file or directory'
+  echo ' -   go up one directory'
+  echo ' f   open a new file'
+  echo ' d   create a directory'
+  echo ' D   delete selected file or directory'
+  echo ' r   reload directory listing'
+  echo ' R   move selected file or directory'
+  echo ' ?   show this message'
+enddef
+
 def Compare(f1: dict<any>, f2: dict<any>): number
   if IsDir(f1) != IsDir(f2)
     return IsDir(f1) ? -1 : +1
