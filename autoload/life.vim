@@ -91,6 +91,26 @@ export def Delete()
   setlocal nomodifiable
 enddef
 
+export def Move()
+  var path = b:life_current_dir .. getline('.')
+  const newpath = input('Moving ' .. path .. ' to: ', isdirectory(path) ? fnamemodify(path, ':h') : path, 'file')
+
+  if !newpath
+    return
+  endif
+
+  const output = system('mv ' .. fnameescape(path) .. ' ' .. fnameescape(newpath))
+  if v:shell_error != 0
+    echoerr output
+    return
+  endif
+
+  life#OpenDir(b:life_current_dir)
+  redraw!
+
+  MoveCursor(fnamemodify(newpath, ':t'))
+enddef
+
 def Compare(f1: dict<any>, f2: dict<any>): number
   if IsDir(f1) != IsDir(f2)
     return IsDir(f1) ? -1 : +1
