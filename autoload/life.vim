@@ -5,9 +5,16 @@ export def OpenDir(path: string)
   sort(entries, Compare)
   const names = entries->mapnew((_, file) => file.name .. (IsDir(file) ? '/' : ''))
 
-  enew
+  if &filetype == 'life'
+    setlocal modifiable
+    silent keepjumps :% delete _
+  else
+    enew
+    setlocal filetype=life
+  endif
+
   setline(1, names)
-  setlocal filetype=life
+  setlocal nomodifiable
 
   b:life_current_dir = path
 enddef
