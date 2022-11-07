@@ -92,7 +92,7 @@ export def Delete()
 enddef
 
 export def Move()
-  var path = b:life_current_dir .. getline('.')
+  const path = b:life_current_dir .. getline('.')
   const newpath = input('Moving ' .. path .. ' to: ', isdirectory(path) ? fnamemodify(path, ':h') : path, 'file')
 
   if !newpath
@@ -111,15 +111,36 @@ export def Move()
   MoveCursor(fnamemodify(newpath, ':t'))
 enddef
 
+export def Copy()
+  const path = b:life_current_dir .. getline('.')
+  const newpath = input('Copying ' .. path .. ' to: ', isdirectory(path) ? fnamemodify(path, ':h') : path, 'file')
+
+  if !newpath
+    return
+  endif
+
+  const output = system('cp -R ' .. fnameescape(path) .. ' ' .. fnameescape(newpath))
+  if v:shell_error != 0
+    echoerr output
+    return
+  endif
+
+  life#OpenDir(b:life_current_dir)
+  redraw!
+
+  MoveCursor(fnamemodify(newpath, ':t'))
+enddef
+
 export def Help()
   echo 'Available commands:'
   echo '<cr> open selected file or directory'
   echo ' -   go up one directory'
   echo ' f   open a new file'
   echo ' d   create a directory'
+  echo ' C   copy selected file or directory'
+  echo ' R   move/rename selected file or directory'
   echo ' D   delete selected file or directory'
   echo ' r   reload directory listing'
-  echo ' R   move selected file or directory'
   echo ' ?   show this message'
 enddef
 
