@@ -54,17 +54,21 @@ enddef
 
 export def CreateFile()
   const filename = input('Please enter a file name: ')
-  const path = b:life_current_dir .. filename
+  if !filename
+    return
+  endif
 
+  const path = b:life_current_dir .. filename
   execute 'edit' fnameescape(path)
 enddef
 
 export def CreateDir()
   const dirname = input('Please enter a directory name: ')
+  if !dirname
+    return
+  endif
+
   const path = b:life_current_dir .. dirname
-
-  redraw! # get rid of input message
-
   const output = system('mkdir -p ' .. fnameescape(path))
   if v:shell_error != 0
     echoerr output
@@ -72,7 +76,7 @@ export def CreateDir()
   endif
 
   life#OpenDir(b:life_current_dir)
-
+  redraw!
   MoveCursor(dirname)
 enddef
 
@@ -114,7 +118,6 @@ export def Move()
 
   life#OpenDir(b:life_current_dir)
   redraw!
-
   MoveCursor(fnamemodify(newpath, ':t'))
 enddef
 
@@ -134,7 +137,6 @@ export def Copy()
 
   life#OpenDir(b:life_current_dir)
   redraw!
-
   MoveCursor(fnamemodify(newpath, ':t'))
 enddef
 
