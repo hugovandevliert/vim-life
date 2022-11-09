@@ -9,7 +9,7 @@ export def OpenDir(path: string)
     setlocal modifiable
     silent keepjumps :% delete _
   else
-    enew
+    keepjumps enew
     setlocal filetype=life
   endif
 
