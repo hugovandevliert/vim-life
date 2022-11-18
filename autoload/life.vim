@@ -9,7 +9,8 @@ export def OpenDir(path: string)
     setlocal modifiable
     silent keepjumps :% delete _
   else
-    keepjumps enew
+    keepjumps keepalt buffer
+    execute 'silent keepalt file' fnameescape(fnamemodify(path, ':h'))
     setlocal filetype=life
   endif
 
