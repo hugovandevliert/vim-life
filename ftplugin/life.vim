@@ -1,6 +1,7 @@
 vim9script
 
 setlocal buftype=nowrite
+setlocal bufhidden=delete
 setlocal nobuflisted
 setlocal noswapfile
 
