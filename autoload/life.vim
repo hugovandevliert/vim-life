@@ -20,15 +20,10 @@ export def OpenDir(path: string)
   b:life_current_dir = path
 enddef
 
-export def Open()
+export def Open(cmd = 'edit')
   const path = b:life_current_dir .. getline('.')
 
-  if isdirectory(path)
-    life#OpenDir(path)
-    return
-  endif
-
-  execute 'edit' fnameescape(path)
+  execute cmd fnameescape(path)
 enddef
 
 export def Up()
@@ -143,7 +138,9 @@ enddef
 
 export def Help()
   echo 'Available commands:'
-  echo '<cr> open selected file or directory'
+  echo '<CR> open selected file or directory'
+  echo ' s   open selected file or directory in a split window'
+  echo ' v   open selected file or directory in a vertical split window'
   echo ' -   go up one directory'
   echo ' f   open a new file'
   echo ' d   create a directory'

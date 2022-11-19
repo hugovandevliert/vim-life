@@ -10,6 +10,8 @@ setlocal nonumber
 setlocal nospell
 
 nnoremap <buffer> <Plug>(life-open) <Cmd>call life#Open()<CR>
+nnoremap <buffer> <Plug>(life-open-split) <Cmd>call life#Open('split')<CR>
+nnoremap <buffer> <Plug>(life-open-vertical-split) <Cmd>call life#Open('vsplit')<CR>
 nnoremap <buffer> <Plug>(life-up) <Cmd>call life#Up()<CR>
 nnoremap <buffer> <Plug>(life-create-file) <Cmd>call life#CreateFile()<CR>
 nnoremap <buffer> <Plug>(life-create-dir) <Cmd>call life#CreateDir()<CR>
@@ -20,6 +22,8 @@ nnoremap <buffer> <Plug>(life-copy) <Cmd>call life#Copy()<CR>
 nnoremap <buffer> <Plug>(life-help) <Cmd>call life#Help()<CR>
 
 nmap <buffer><nowait> <CR> <Plug>(life-open)
+nmap <buffer><nowait> s <Plug>(life-open-split)
+nmap <buffer><nowait> v <Plug>(life-open-vertical-split)
 nmap <buffer><nowait> - <Plug>(life-up)
 nmap <buffer><nowait> f <Plug>(life-create-file)
 nmap <buffer><nowait> d <Plug>(life-create-dir)
