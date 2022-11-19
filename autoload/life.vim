@@ -5,17 +5,11 @@ export def OpenDir(path: string)
   sort(entries, Compare)
   const names = entries->mapnew((_, file) => file.name .. (IsDir(file) ? '/' : ''))
 
-  if &filetype == 'life'
-    setlocal modifiable
-    silent keepjumps :% delete _
-  else
-    keepjumps keepalt buffer
-    execute 'silent keepalt file' fnameescape(fnamemodify(path, ':h'))
-    setlocal filetype=life
-  endif
-
+  setlocal modifiable
+  silent keepjumps :% delete _
   setline(1, names)
-  setlocal nomodifiable
+  setlocal nomodifiable filetype=life
+  silent keepalt execute 'file' fnameescape(fnamemodify(path, ':h'))
 
   b:life_current_dir = path
 enddef
@@ -23,28 +17,24 @@ enddef
 export def Open(cmd = 'edit')
   const path = b:life_current_dir .. getline('.')
 
-  execute cmd fnameescape(path)
+  silent execute cmd fnameescape(path)
 enddef
 
 export def Up()
-  const parent_dir = fnamemodify(b:life_current_dir, ':h:h')
+  var parent_dir = fnamemodify(b:life_current_dir, ':h:h')
   const previous_folder = fnamemodify(b:life_current_dir, ':h:t')
 
-  if parent_dir == '/'
-    life#OpenDir(parent_dir)
-  else
-    life#OpenDir(parent_dir .. '/')
+  if parent_dir != '/'
+    parent_dir ..= '/'
   endif
 
+  silent execute 'edit' fnameescape(parent_dir)
   MoveCursor(previous_folder)
 enddef
 
 export def Reload()
   const filename = getline('.')
-
-  life#OpenDir(b:life_current_dir)
-  redraw!
-
+  edit
   MoveCursor(filename)
 enddef
 
@@ -71,7 +61,7 @@ export def CreateDir()
     return
   endif
 
-  life#OpenDir(b:life_current_dir)
+  edit
   redraw!
   MoveCursor(dirname)
 enddef
@@ -112,7 +102,7 @@ export def Move()
     return
   endif
 
-  life#OpenDir(b:life_current_dir)
+  edit
   redraw!
   MoveCursor(fnamemodify(newpath, ':t'))
 enddef
@@ -131,7 +121,7 @@ export def Copy()
     return
   endif
 
-  life#OpenDir(b:life_current_dir)
+  edit
   redraw!
   MoveCursor(fnamemodify(newpath, ':t'))
 enddef
@@ -151,6 +141,11 @@ export def Help()
   echo ' ?   show this message'
 enddef
 
+def MoveCursor(text: string)
+  const pattern = printf('\V\^%s\/\?\$', text)
+  search(pattern, 'c')
+enddef
+
 def Compare(f1: dict<any>, f2: dict<any>): number
   if IsDir(f1) != IsDir(f2)
     return IsDir(f1) ? -1 : +1
@@ -161,9 +156,4 @@ enddef
 
 def IsDir(file: dict<any>): bool
   return file.type =~ 'dir\|linkd'
-enddef
-
-def MoveCursor(text: string)
-  const pattern = printf('\V\^%s\/\?\$', text)
-  search(pattern, 'c')
 enddef

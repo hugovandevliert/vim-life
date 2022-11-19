@@ -1,6 +1,11 @@
 vim9script
 
-setlocal buftype=nowrite
+if exists('b:did_ftplugin')
+  finish
+endif
+b:did_ftplugin = true
+
+setlocal buftype=nofile
 setlocal bufhidden=delete
 setlocal nobuflisted
 setlocal noswapfile
