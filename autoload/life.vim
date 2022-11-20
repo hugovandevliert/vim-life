@@ -60,7 +60,7 @@ enddef
 
 export def Delete()
   const path = CurrentDir() .. getline('.')
-  echo 'Confirm deletion of' isdirectory(path) ? 'directory' : 'file' fnameescape(path) '[Y/n]'
+  echo 'Confirm deletion of' isdirectory(path) ? 'directory' : 'file' path '[Y/n]'
   const c = getchar()
 
   if c != 13 && c != 121 # Y or <CR>
