@@ -10,25 +10,17 @@ export def OpenDir(path: string)
   setline(1, names)
   setlocal nomodifiable filetype=life
   silent keepalt execute 'file' fnameescape(fnamemodify(path, ':h'))
-
-  b:life_current_dir = path
 enddef
 
 export def Open(cmd = 'edit')
-  const path = b:life_current_dir .. getline('.')
+  const path = CurrentDir() .. getline('.')
 
   silent execute cmd fnameescape(path)
 enddef
 
 export def Up()
-  var parent_dir = fnamemodify(b:life_current_dir, ':h:h')
-  const previous_folder = fnamemodify(b:life_current_dir, ':h:t')
-
-  if parent_dir != '/'
-    parent_dir ..= '/'
-  endif
-
-  silent execute 'edit' fnameescape(parent_dir)
+  const previous_folder = expand('%:t')
+  silent edit %:h
   MoveCursor(previous_folder)
 enddef
 
@@ -44,7 +36,7 @@ export def CreateFile()
     return
   endif
 
-  const path = b:life_current_dir .. filename
+  const path = CurrentDir() .. filename
   execute 'edit' fnameescape(path)
 enddef
 
@@ -54,7 +46,7 @@ export def CreateDir()
     return
   endif
 
-  const path = b:life_current_dir .. dirname
+  const path = CurrentDir() .. dirname
   const output = system('mkdir -p ' .. fnameescape(path))
   if v:shell_error != 0
     echoerr output
@@ -67,7 +59,7 @@ export def CreateDir()
 enddef
 
 export def Delete()
-  const path = b:life_current_dir .. getline('.')
+  const path = CurrentDir() .. getline('.')
   echo 'Confirm deletion of' isdirectory(path) ? 'directory' : 'file' fnameescape(path) '[Y/n]'
   const c = getchar()
 
@@ -82,14 +74,13 @@ export def Delete()
     return
   endif
 
-  redraw!
   setlocal modifiable
   delete
   setlocal nomodifiable
 enddef
 
 export def Move()
-  const path = b:life_current_dir .. getline('.')
+  const path = CurrentDir() .. getline('.')
   const newpath = input('Moving ' .. path .. ' to: ', isdirectory(path) ? fnamemodify(path, ':h') : path, 'file')
 
   if !newpath
@@ -108,7 +99,7 @@ export def Move()
 enddef
 
 export def Copy()
-  const path = b:life_current_dir .. getline('.')
+  const path = CurrentDir() .. getline('.')
   const newpath = input('Copying ' .. path .. ' to: ', isdirectory(path) ? fnamemodify(path, ':h') : path, 'file')
 
   if !newpath
@@ -156,4 +147,8 @@ enddef
 
 def IsDir(file: dict<any>): bool
   return file.type =~ 'dir\|linkd'
+enddef
+
+def CurrentDir(): string
+  return expand('%') .. '/'
 enddef
