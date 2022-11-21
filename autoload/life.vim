@@ -1,14 +1,12 @@
 vim9script
 
-export def OpenDir(path: string)
-  final entries = readdirex(path, '1', { sort: 'none' })
-  sort(entries, Compare)
-  const names = entries->mapnew((_, file) => file.name .. (IsDir(file) ? '/' : ''))
-
-  setlocal modifiable
-  silent keepjumps :% delete _
-  setline(1, names)
-  setlocal nomodifiable filetype=life
+export def Init()
+  const path = expand('%:p')
+  if !isdirectory(path)
+    return
+  endif
+  setlocal filetype=life
+  ListContents(path)
   silent keepalt execute 'file' fnameescape(fnamemodify(path, ':h'))
 enddef
 
@@ -26,7 +24,7 @@ enddef
 
 export def Reload()
   const filename = getline('.')
-  edit
+  ListContents(CurrentDir())
   MoveCursor(filename)
 enddef
 
@@ -53,8 +51,8 @@ export def CreateDir()
     return
   endif
 
-  edit
   redraw!
+  ListContents(CurrentDir())
   MoveCursor(dirname)
 enddef
 
@@ -74,6 +72,7 @@ export def Delete()
     return
   endif
 
+  redraw!
   setlocal modifiable
   delete
   setlocal nomodifiable
@@ -93,8 +92,8 @@ export def Move()
     return
   endif
 
-  edit
   redraw!
+  ListContents(CurrentDir())
   MoveCursor(fnamemodify(newpath, ':t'))
 enddef
 
@@ -112,8 +111,8 @@ export def Copy()
     return
   endif
 
-  edit
   redraw!
+  ListContents(CurrentDir())
   MoveCursor(fnamemodify(newpath, ':t'))
 enddef
 
@@ -130,6 +129,17 @@ export def Help()
   echo ' D   delete selected file or directory'
   echo ' r   reload directory listing'
   echo ' ?   show this message'
+enddef
+
+def ListContents(path: string)
+  final entries = readdirex(path, '1', {sort: 'none'})
+  sort(entries, Compare)
+  const names = entries->mapnew((_, file) => file.name .. (IsDir(file) ? '/' : ''))
+
+  setlocal modifiable
+  silent keepjumps :% delete _
+  setline(1, names)
+  setlocal nomodifiable
 enddef
 
 def MoveCursor(text: string)

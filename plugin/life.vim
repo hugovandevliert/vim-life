@@ -12,10 +12,11 @@ augroup life
 augroup END
 
 def OnBufEnter()
-  const path = expand('%:p')
-  if isdirectory(path)
-    life#OpenDir(path)
+  if exists('b:life_initialized')
+    return
   endif
+  b:life_initialized = true
+  life#Init()
 enddef
 
 def OnVimEnter()
