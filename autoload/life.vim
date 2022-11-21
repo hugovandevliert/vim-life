@@ -13,12 +13,12 @@ enddef
 export def Open(cmd = 'edit')
   const path = CurrentDir() .. getline('.')
 
-  silent execute cmd fnameescape(path)
+  silent keepalt execute cmd fnameescape(path)
 enddef
 
 export def Up()
   const previous_folder = expand('%:t')
-  silent edit %:h
+  silent keepalt edit %:h
   MoveCursor(previous_folder)
 enddef
 
