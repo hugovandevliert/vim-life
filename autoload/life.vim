@@ -13,7 +13,7 @@ enddef
 export def Open(cmd = 'edit')
   const path = CurrentDir() .. getline('.')
 
-  silent keepalt execute cmd fnameescape(path)
+  silent keepalt execute cmd fnameescape(fnamemodify(path, ':.'))
 enddef
 
 export def Up()
@@ -35,7 +35,7 @@ export def CreateFile()
   endif
 
   const path = CurrentDir() .. filename
-  execute 'edit' fnameescape(path)
+  execute 'edit' fnameescape(fnamemodify(path, ':.'))
 enddef
 
 export def CreateDir()
