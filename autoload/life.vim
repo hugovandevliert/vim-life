@@ -1,19 +1,28 @@
 vim9script
 
 export def Init()
-  const path = expand('%:p')
+  var path = expand('%:p')
   if !isdirectory(path)
     return
   endif
+
   setlocal filetype=life
   ListContents(path)
-  silent keepalt execute 'file' fnameescape(fnamemodify(path, ':h'))
+
+  path = fnamemodify(path, ':h')
+  if path != getcwd()
+    path = fnamemodify(path, ':.')
+  endif
+  silent keepalt execute 'file' fnameescape(path)
 enddef
 
 export def Open(cmd = 'edit')
-  const path = CurrentDir() .. getline('.')
+  var path = CurrentDir() .. getline('.')
+  if !isdirectory(path)
+    path = fnamemodify(path, ':.')
+  endif
 
-  silent keepalt execute cmd fnameescape(fnamemodify(path, ':.'))
+  silent keepalt execute cmd fnameescape(path)
 enddef
 
 export def Up()
