@@ -6,18 +6,17 @@ export def Init()
     return
   endif
 
-  setlocal filetype=life
-  ListContents(path)
-
   path = fnamemodify(path, ':h')
   if path != getcwd()
     path = fnamemodify(path, ':.')
   endif
   silent keepalt execute 'file' fnameescape(path)
+  setlocal filetype=life
+  ListDirectoryContents()
 enddef
 
 export def Open(cmd = 'edit')
-  var path = CurrentDir() .. getline('.')
+  var path = SelectedPath()
   if !isdirectory(path)
     path = fnamemodify(path, ':.')
   endif
@@ -33,7 +32,7 @@ enddef
 
 export def Reload()
   const filename = getline('.')
-  ListContents(CurrentDir())
+  ListDirectoryContents()
   MoveCursor(filename)
 enddef
 
@@ -61,12 +60,12 @@ export def CreateDir()
   endif
 
   redraw!
-  ListContents(CurrentDir())
+  ListDirectoryContents()
   MoveCursor(dirname)
 enddef
 
 export def Delete()
-  const path = CurrentDir() .. getline('.')
+  const path = SelectedPath()
   echo 'Confirm deletion of' isdirectory(path) ? 'directory' : 'file' path '[Y/n]'
   const c = getchar()
 
@@ -88,7 +87,7 @@ export def Delete()
 enddef
 
 export def Move()
-  const path = CurrentDir() .. getline('.')
+  const path = SelectedPath()
   const newpath = input('Moving ' .. path .. ' to: ', isdirectory(path) ? fnamemodify(path, ':h') : path, 'file')
 
   if !newpath
@@ -102,12 +101,12 @@ export def Move()
   endif
 
   redraw!
-  ListContents(CurrentDir())
+  ListDirectoryContents()
   MoveCursor(fnamemodify(newpath, ':t'))
 enddef
 
 export def Copy()
-  const path = CurrentDir() .. getline('.')
+  const path = SelectedPath()
   const newpath = input('Copying ' .. path .. ' to: ', isdirectory(path) ? fnamemodify(path, ':h') : path, 'file')
 
   if !newpath
@@ -121,7 +120,7 @@ export def Copy()
   endif
 
   redraw!
-  ListContents(CurrentDir())
+  ListDirectoryContents()
   MoveCursor(fnamemodify(newpath, ':t'))
 enddef
 
@@ -140,10 +139,9 @@ export def Help()
   echo ' ?   show this message'
 enddef
 
-def ListContents(path: string)
-  final entries = readdirex(path, '1', {sort: 'none'})
-  sort(entries, Compare)
-  const names = entries->mapnew((_, file) => file.name .. (IsDir(file) ? '/' : ''))
+def ListDirectoryContents()
+  b:life_directory_entries = readdirex(CurrentDir(), '1', {sort: 'none'})->sort(CompareFilenames)
+  const names = b:life_directory_entries->mapnew((_, file) => file.name .. (IsDir(file) ? '/' : ''))
 
   setlocal modifiable
   silent keepjumps :% delete _
@@ -156,7 +154,7 @@ def MoveCursor(text: string)
   search(pattern, 'c')
 enddef
 
-def Compare(f1: dict<any>, f2: dict<any>): number
+def CompareFilenames(f1: dict<any>, f2: dict<any>): number
   if IsDir(f1) != IsDir(f2)
     return IsDir(f1) ? -1 : +1
   endif
@@ -166,6 +164,13 @@ enddef
 
 def IsDir(file: dict<any>): bool
   return file.type =~ 'dir\|linkd'
+enddef
+
+def SelectedPath(): string
+  const selected = b:life_directory_entries[line('.') - 1]
+  const name = selected.name .. (IsDir(selected) ? '/' : '')
+
+  return CurrentDir() .. name
 enddef
 
 def CurrentDir(): string
