@@ -136,12 +136,28 @@ export def Help()
   echo ' R   move/rename selected file or directory'
   echo ' D   delete selected file or directory'
   echo ' r   reload directory listing'
+  echo ' i   toggle file info'
   echo ' ?   show this message'
+enddef
+
+export def ToggleInfo()
+  b:life_show_info = !get(b:, 'life_show_info', false)
+  ListDirectoryContents()
 enddef
 
 def ListDirectoryContents()
   b:life_directory_entries = readdirex(CurrentDir(), '1', {sort: 'none'})->sort(CompareFilenames)
-  const names = b:life_directory_entries->mapnew((_, file) => file.name .. (IsDir(file) ? '/' : ''))
+
+  var names: list<string>
+  if get(b:, 'life_show_info', false)
+    names = b:life_directory_entries->mapnew((_, file) => {
+      const name = file.name .. (IsDir(file) ? '/' : '')
+      const info = strftime('%c', file.time)
+      return printf('%-40s', name) .. '  ' .. info
+    })
+  else
+    names = b:life_directory_entries->mapnew((_, file) => file.name .. (IsDir(file) ? '/' : ''))
+  endif
 
   setlocal modifiable
   silent keepjumps :% delete _

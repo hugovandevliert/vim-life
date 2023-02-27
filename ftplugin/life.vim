@@ -25,6 +25,7 @@ nnoremap <buffer> <Plug>(life-reload) <Cmd>call life#Reload()<CR>
 nnoremap <buffer> <Plug>(life-move) <Cmd>call life#Move()<CR>
 nnoremap <buffer> <Plug>(life-copy) <Cmd>call life#Copy()<CR>
 nnoremap <buffer> <Plug>(life-help) <Cmd>call life#Help()<CR>
+nnoremap <buffer> <Plug>(life-toggle-info) <Cmd>call life#ToggleInfo()<CR>
 
 nmap <buffer><nowait> <CR> <Plug>(life-open)
 nmap <buffer><nowait> s <Plug>(life-open-split)
@@ -36,4 +37,5 @@ nmap <buffer><nowait> D <Plug>(life-delete)
 nmap <buffer><nowait> r <Plug>(life-reload)
 nmap <buffer><nowait> R <Plug>(life-move)
 nmap <buffer><nowait> C <Plug>(life-copy)
+nmap <buffer><nowait> i <Plug>(life-toggle-info)
 nmap <buffer><nowait> ? <Plug>(life-help)
