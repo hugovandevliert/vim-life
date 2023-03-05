@@ -5,5 +5,5 @@ if exists('b:current_syntax')
 endif
 b:current_syntax = 'life'
 
-syntax match lifeDirectory =^.\+/$=
+syntax match lifeDirectory =\%(\S\+ \)*\S\+/\ze\%(\s\{2,}\|$\)=
 highlight default link lifeDirectory Directory
