@@ -31,7 +31,7 @@ export def Up()
 enddef
 
 export def Reload()
-  const filename = getline('.')
+  const filename = SelectedItem()
   ListDirectoryContents()
   MoveCursor(filename)
 enddef
@@ -142,11 +142,13 @@ enddef
 
 export def ToggleInfo()
   b:life_show_info = !get(b:, 'life_show_info', false)
+  const filename = SelectedItem()
   ListDirectoryContents()
+  MoveCursor(filename)
 enddef
 
 def ListDirectoryContents()
-  b:life_directory_entries = readdirex(CurrentDir(), '1', {sort: 'none'})->sort(CompareFilenames)
+  b:life_directory_entries = readdirex(CurrentDir(), '1', {sort: 'none'})->sort(CompareFile)
 
   var names: list<string>
   if get(b:, 'life_show_info', false)
@@ -166,11 +168,11 @@ def ListDirectoryContents()
 enddef
 
 def MoveCursor(text: string)
-  const pattern = printf('\V\^%s\/\?\$', text)
+  const pattern = printf('^%s\/\?\%(\s\{2,}\|$\)', text)
   search(pattern, 'c')
 enddef
 
-def CompareFilenames(f1: dict<any>, f2: dict<any>): number
+def CompareFile(f1: dict<any>, f2: dict<any>): number
   if IsDir(f1) != IsDir(f2)
     return IsDir(f1) ? -1 : +1
   endif
@@ -183,10 +185,12 @@ def IsDir(file: dict<any>): bool
 enddef
 
 def SelectedPath(): string
-  const selected = b:life_directory_entries[line('.') - 1]
-  const name = selected.name .. (IsDir(selected) ? '/' : '')
+  return CurrentDir() .. SelectedItem()
+enddef
 
-  return CurrentDir() .. name
+def SelectedItem(): string
+  const selected = b:life_directory_entries[line('.') - 1]
+  return selected.name .. (IsDir(selected) ? '/' : '')
 enddef
 
 def CurrentDir(): string
