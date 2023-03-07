@@ -141,7 +141,7 @@ export def Help()
 enddef
 
 export def ToggleInfo()
-  b:life_show_info = !get(b:, 'life_show_info', false)
+  w:life_show_info = !get(w:, 'life_show_info', false)
   const filename = SelectedItem()
   ListDirectoryContents()
   MoveCursor(filename)
@@ -151,11 +151,13 @@ def ListDirectoryContents()
   b:life_directory_entries = readdirex(CurrentDir(), '1', {sort: 'none'})->sort(CompareFile)
 
   var names: list<string>
-  if get(b:, 'life_show_info', false)
+  if get(w:, 'life_show_info', false)
+    # TODO: General idea is to take longest dir name (maybe even truncate it)
+    # and set padding to that + ~20.
     names = b:life_directory_entries->mapnew((_, file) => {
       const name = file.name .. (IsDir(file) ? '/' : '')
       const info = strftime('%c', file.time)
-      return printf('%-40s', name) .. '  ' .. info
+      return printf('%-20s', name) .. '  ' .. info
     })
   else
     names = b:life_directory_entries->mapnew((_, file) => file.name .. (IsDir(file) ? '/' : ''))
