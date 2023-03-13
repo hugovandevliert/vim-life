@@ -156,8 +156,9 @@ def ListDirectoryContents()
     # and set padding to that + ~20.
     names = b:life_directory_entries->mapnew((_, file) => {
       const name = file.name .. (IsDir(file) ? '/' : '')
-      const info = strftime('%c', file.time)
-      return printf('%-20s', name) .. '  ' .. info
+      const time = strftime('%x %X', file.time)
+      const size = HumanReadableSize(file.size)
+      return printf('%-40S %6S %20S', name, size, time)
     })
   else
     names = b:life_directory_entries->mapnew((_, file) => file.name .. (IsDir(file) ? '/' : ''))
@@ -172,6 +173,23 @@ enddef
 def MoveCursor(text: string)
   const pattern = printf('^%s\/\?\%(\s\{2,}\|$\)', text)
   search(pattern, 'c')
+enddef
+
+def HumanReadableSize(bytes: number): string
+  if bytes == 0
+    return ''
+  endif
+
+  const suffixes = ['B', 'KB', 'MB', 'GB', 'TB']
+  var size = bytes
+  var i = 0
+
+  while size >= 1024
+    size = size / 1024
+    i += 1
+  endwhile
+
+  return printf('%.0f %s', size, suffixes[i])
 enddef
 
 def CompareFile(f1: dict<any>, f2: dict<any>): number
