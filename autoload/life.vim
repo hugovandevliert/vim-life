@@ -152,13 +152,12 @@ def ListDirectoryContents()
 
   var names: list<string>
   if get(w:, 'life_show_info', false)
-    # TODO: General idea is to take longest dir name (maybe even truncate it)
-    # and set padding to that + ~20.
+    const offset = max(mapnew(b:life_directory_entries, (_, file) => strchars(file.name))) + 10
     names = b:life_directory_entries->mapnew((_, file) => {
       const name = file.name .. (IsDir(file) ? '/' : '')
       const time = strftime('%x %X', file.time)
       const size = HumanReadableSize(file.size)
-      return printf('%-40S %6S %20S', name, size, time)
+      return printf($"%-{offset}S %6S %20S", name, size, time)
     })
   else
     names = b:life_directory_entries->mapnew((_, file) => file.name .. (IsDir(file) ? '/' : ''))
