@@ -16,7 +16,7 @@ export def Init()
 enddef
 
 export def Open(cmd = 'edit')
-  var path = SelectedPath()
+  var path = CurrentDir() .. CurrentItem()
   if !isdirectory(path)
     path = fnamemodify(path, ':.')
   endif
@@ -31,7 +31,7 @@ export def Up()
 enddef
 
 export def Reload()
-  const filename = SelectedItem()
+  const filename = CurrentItem()
   ListDirectoryContents()
   MoveCursor(filename)
 enddef
@@ -65,7 +65,7 @@ export def CreateDir()
 enddef
 
 export def Delete()
-  const path = SelectedPath()
+  const path = CurrentDir() .. CurrentItem()
   echo 'Confirm deletion of' isdirectory(path) ? 'directory' : 'file' path '[Y/n]'
   const c = getchar()
 
@@ -80,6 +80,8 @@ export def Delete()
     return
   endif
 
+  remove(b:life_directory_items, line('.') - 1)
+
   redraw!
   setlocal modifiable
   delete
@@ -87,7 +89,7 @@ export def Delete()
 enddef
 
 export def Move()
-  const path = SelectedPath()
+  const path = CurrentDir() .. CurrentItem()
   const newpath = input('Moving ' .. path .. ' to: ', isdirectory(path) ? fnamemodify(path, ':h') : path, 'file')
 
   if !newpath
@@ -106,7 +108,7 @@ export def Move()
 enddef
 
 export def Copy()
-  const path = SelectedPath()
+  const path = CurrentDir() .. CurrentItem()
   const newpath = input('Copying ' .. path .. ' to: ', isdirectory(path) ? fnamemodify(path, ':h') : path, 'file')
 
   if !newpath
@@ -142,25 +144,25 @@ enddef
 
 export def ToggleInfo()
   w:life_show_info = !get(w:, 'life_show_info', false)
-  const filename = SelectedItem()
+  const current = CurrentItem()
   ListDirectoryContents()
-  MoveCursor(filename)
+  MoveCursor(current)
 enddef
 
 def ListDirectoryContents()
-  b:life_directory_entries = readdirex(CurrentDir(), '1', {sort: 'none'})->sort(CompareFile)
+  b:life_directory_items = readdirex(CurrentDir(), '1', {sort: 'none'})->sort(CompareFile)
 
   var names: list<string>
   if get(w:, 'life_show_info', false)
-    const offset = max(mapnew(b:life_directory_entries, (_, file) => strchars(file.name))) + 10
-    names = b:life_directory_entries->mapnew((_, file) => {
+    const offset = max(mapnew(b:life_directory_items, (_, file) => strchars(file.name))) + 10
+    names = mapnew(b:life_directory_items, (_, file) => {
       const name = file.name .. (IsDir(file) ? '/' : '')
       const time = strftime('%x %X', file.time)
       const size = HumanReadableSize(file.size)
       return printf($"%-{offset}S %6S %20S", name, size, time)
     })
   else
-    names = b:life_directory_entries->mapnew((_, file) => file.name .. (IsDir(file) ? '/' : ''))
+    names = mapnew(b:life_directory_items, (_, file) => file.name .. (IsDir(file) ? '/' : ''))
   endif
 
   setlocal modifiable
@@ -203,13 +205,9 @@ def IsDir(file: dict<any>): bool
   return file.type =~ 'dir\|linkd'
 enddef
 
-def SelectedPath(): string
-  return CurrentDir() .. SelectedItem()
-enddef
-
-def SelectedItem(): string
-  const selected = b:life_directory_entries[line('.') - 1]
-  return selected.name .. (IsDir(selected) ? '/' : '')
+def CurrentItem(): string
+  const item = b:life_directory_items[line('.') - 1]
+  return item.name .. (IsDir(item) ? '/' : '')
 enddef
 
 def CurrentDir(): string
