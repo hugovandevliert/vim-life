@@ -172,7 +172,7 @@ def ListDirectoryContents()
 enddef
 
 def MoveCursor(text: string)
-  const pattern = printf('^%s\/\?\%(\s\{2,}\|$\)', text)
+  const pattern = printf('^%s\/\?\%(\s\{2,}\|$\)', fnameescape(text))
   search(pattern, 'c')
 enddef
 
