@@ -127,6 +127,7 @@ export def Copy()
 enddef
 
 export def Help()
+  redraw!
   echo 'Available commands:'
   echo '<CR> open selected file or directory'
   echo ' s   open selected file or directory in a split window'
