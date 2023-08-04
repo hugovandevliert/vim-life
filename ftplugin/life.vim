@@ -28,6 +28,7 @@ nnoremap <buffer> <Plug>(life-help) <Cmd>call life#Help()<CR>
 nnoremap <buffer> <Plug>(life-toggle-info) <Cmd>call life#ToggleInfo()<CR>
 
 nmap <buffer><nowait> <CR> <Plug>(life-open)
+nmap <buffer><nowait> o <Plug>(life-open)
 nmap <buffer><nowait> s <Plug>(life-open-split)
 nmap <buffer><nowait> v <Plug>(life-open-vertical-split)
 nmap <buffer><nowait> - <Plug>(life-up)

@@ -22,7 +22,7 @@ Open a directory:
 edit .
 ```
 
-Use `hjkl` to navigate, `-` to go up the directory tree, and `<CR>` to open a file or directory.
+Use `hjkl` to navigate, `-` to go up the directory tree, and `o` or `<CR>` to open a file or directory.
 
 For more actions, press `?` to see an overview of all available commands.
 

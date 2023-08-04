@@ -129,18 +129,18 @@ enddef
 export def Help()
   redraw!
   echo 'Available commands:'
-  echo '<CR> open selected file or directory'
-  echo ' s   open selected file or directory in a split window'
-  echo ' v   open selected file or directory in a vertical split window'
-  echo ' -   go up one directory'
-  echo ' f   open a new file'
-  echo ' d   create a directory'
-  echo ' C   copy selected file or directory'
-  echo ' R   move/rename selected file or directory'
-  echo ' D   delete selected file or directory'
-  echo ' r   reload directory listing'
-  echo ' i   toggle file info'
-  echo ' ?   show this message'
+  echo 'o open selected file or directory'
+  echo 's open selected file or directory in a split window'
+  echo 'v open selected file or directory in a vertical split window'
+  echo '- go up one directory'
+  echo 'f open a new file'
+  echo 'd create a directory'
+  echo 'C copy selected file or directory'
+  echo 'R move/rename selected file or directory'
+  echo 'D delete selected file or directory'
+  echo 'r reload directory listing'
+  echo 'i toggle file info'
+  echo '? show this message'
 enddef
 
 export def ToggleInfo()
