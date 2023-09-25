@@ -77,7 +77,7 @@ export def Delete()
   echo 'Confirm deletion of' isdirectory(path) ? 'directory' : 'file' path '[Y/n]'
   const c = getchar()
 
-  if c != 13 && c != 121 # Y or <CR>
+  if c != 13 && c != 89 && c != 121 # <CR> or Y or y
     redraw!
     return
   endif
