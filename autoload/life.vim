@@ -16,6 +16,10 @@ export def Init()
 enddef
 
 export def Open(cmd = 'edit')
+  if CurrentItem() == ''
+    return
+  endif
+
   var path = CurrentDir() .. CurrentItem()
   if !isdirectory(path)
     path = fnamemodify(path, ':.')
@@ -65,6 +69,10 @@ export def CreateDir()
 enddef
 
 export def Delete()
+  if CurrentItem() == ''
+    return
+  endif
+
   const path = CurrentDir() .. CurrentItem()
   echo 'Confirm deletion of' isdirectory(path) ? 'directory' : 'file' path '[Y/n]'
   const c = getchar()
@@ -89,6 +97,10 @@ export def Delete()
 enddef
 
 export def Move()
+  if CurrentItem() == ''
+    return
+  endif
+
   const path = CurrentDir() .. CurrentItem()
   const newpath = input('Moving ' .. path .. ' to: ', isdirectory(path) ? fnamemodify(path, ':h') : path, 'file')
 
@@ -108,6 +120,10 @@ export def Move()
 enddef
 
 export def Copy()
+  if CurrentItem() == ''
+    return
+  endif
+
   const path = CurrentDir() .. CurrentItem()
   const newpath = input('Copying ' .. path .. ' to: ', isdirectory(path) ? fnamemodify(path, ':h') : path, 'file')
 
@@ -136,7 +152,7 @@ export def Help()
   echo 'f open a new file'
   echo 'd create a directory'
   echo 'C copy selected file or directory'
-  echo 'R move/rename selected file or directory'
+  echo 'R rename/move selected file or directory'
   echo 'D delete selected file or directory'
   echo 'r reload directory listing'
   echo 'i toggle file info'
@@ -207,7 +223,7 @@ def IsDir(file: dict<any>): bool
 enddef
 
 def CurrentItem(): string
-  const item = b:life_directory_items[line('.') - 1]
+  const item = b:life_directory_items->get(line('.') - 1, {name: '', type: ''})
   return item.name .. (IsDir(item) ? '/' : '')
 enddef
 
