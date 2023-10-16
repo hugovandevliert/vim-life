@@ -57,7 +57,7 @@ export def CreateDir()
   endif
 
   const path = CurrentDir() .. dirname
-  const output = system('mkdir -p ' .. fnameescape(path))
+  const output = system('mkdir -p "' .. path .. '"')
   if v:shell_error != 0
     echoerr output
     return
@@ -82,7 +82,7 @@ export def Delete()
     return
   endif
 
-  const output = system('rm -rf ' .. fnameescape(path))
+  const output = system('rm -rf "' .. path .. '"')
   if v:shell_error != 0
     echoerr output
     return
@@ -108,7 +108,7 @@ export def Move()
     return
   endif
 
-  const output = system('mv ' .. fnameescape(path) .. ' ' .. fnameescape(newpath))
+  const output = system('mv "' .. path .. '" "' .. newpath .. '"')
   if v:shell_error != 0
     echoerr output
     return
@@ -131,7 +131,7 @@ export def Copy()
     return
   endif
 
-  const output = system('cp -R ' .. fnameescape(path) .. ' ' .. fnameescape(newpath))
+  const output = system('cp -R "' .. path .. '" "' .. newpath .. '"')
   if v:shell_error != 0
     echoerr output
     return
