@@ -169,17 +169,24 @@ enddef
 def ListDirectoryContents()
   b:life_directory_items = readdirex(CurrentDir(), '1', {sort: 'none'})->sort(CompareFile)
 
-  var names: list<string>
+  # Distinguish between files, directories, and symlinks.
+  const items = mapnew(b:life_directory_items, (_, file) => {
+    var name = file.name .. (IsDir(file) ? '/' : '')
+    if file.type =~ 'link'
+      name = name .. ' --> ' .. resolve(CurrentDir() .. file.name)->fnamemodify(':~:.')
+    endif
+    return { name: name, time: file.time, size: file.size }
+  })
+
+  var names = items->mapnew((_, file) => file.name)
+
   if get(w:, 'life_show_info', false)
-    const offset = max(mapnew(b:life_directory_items, (_, file) => strchars(file.name))) + 10
-    names = mapnew(b:life_directory_items, (_, file) => {
-      const name = file.name .. (IsDir(file) ? '/' : '')
+    const offset = max(mapnew(names, (_, name) => strchars(name))) + 10
+    names = mapnew(items, (_, file) => {
       const time = strftime('%x %X', file.time)
       const size = HumanReadableSize(file.size)
-      return printf($"%-{offset}S %6S %20S", name, size, time)
+      return printf($"%-{offset}S %6S %20S", file.name, size, time)
     })
-  else
-    names = mapnew(b:life_directory_items, (_, file) => file.name .. (IsDir(file) ? '/' : ''))
   endif
 
   setlocal modifiable
@@ -189,7 +196,7 @@ def ListDirectoryContents()
 enddef
 
 def MoveCursor(text: string)
-  const pattern = printf('^%s\/\?\%(\s\{2,}\|$\)', fnameescape(text))
+  const pattern = printf('^%s\/\?\%(\s\{2,}\|\s-->\s\|$\)', fnameescape(text))
   search(pattern, 'c')
 enddef
 
